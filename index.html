@@ -6,7 +6,230 @@
     <title>Dynamic Feelings of the Day</title>
     <link href="https://fonts.googleapis.com/css2?family=Rock+Salt&family=Sacramento&family=Chewy&family=Gloria+Hallelujah&family=Righteous&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* The same CSS as before, no changes needed */
+        /* Your existing CSS remains unchanged */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding-top: 50px;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            opacity: 1;
+            pointer-events: none;
+            transition: opacity 0.5s ease, background 0.5s ease;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 60px;
+            margin-bottom: 0;
+            color: #444;
+            letter-spacing: 1px;
+            font-weight: 700;
+            line-height: 1.2;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+            transition: color 0.5s ease, font-family 0.5s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-left: 15px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            height: 100px;
+            width: 300px;
+            font-size: 22px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            margin: 10px;
+            border: 3px solid;
+            cursor: pointer;
+            border-radius: 18px;
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
+            text-transform: capitalize;
+            text-align: center;
+            line-height: 1.2;
+            box-sizing: border-box;
+        }
+
+        .button:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            background-color: #fff;
+            color: #333;
+        }
+
+        .button.selected {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            background-color: #fff;
+            color: #333;
+            border-color: #333;
+        }
+
+        .button.greyed {
+            background-color: #d3d3d3;
+            color: #d3d3d3;
+            border-color: #d3d3d3;
+            filter: grayscale(100%);
+            pointer-events: auto;
+        }
+
+        .angry {
+            background: linear-gradient(to bottom, #ff6b6b, #ff4d4d);
+            border-color: #ff6b6b;
+            font-family: 'Roboto Slab', serif;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .happy {
+            background: linear-gradient(to bottom, #f9e300, #f57c00);
+            border-color: #f9e300;
+            font-family: 'Chewy', cursive;
+            font-size: 24px;
+        }
+
+        .surprised {
+            background: linear-gradient(to bottom, #ff9800, #ff5722);
+            border-color: #ff9800;
+            font-family: 'Gloria Hallelujah', cursive;
+            font-size: 26px;
+        }
+
+        .calm {
+            background: linear-gradient(to bottom, #81c784, #4caf50);
+            border-color: #81c784;
+            font-family: 'Sacramento', cursive;
+            font-size: 28px;
+            color: #455a64;
+        }
+
+        .sad {
+            background: linear-gradient(to bottom, #7986cb, #5c6bc0);
+            border-color: #7986cb;
+            font-family: 'Righteous', sans-serif;
+            font-size: 26px;
+            color: #1e88e5;
+        }
+
+        .scared {
+            background: linear-gradient(to bottom, #9c27b0, #6a1b9a);
+            border-color: #9c27b0;
+            font-family: 'Rock Salt', cursive;
+            font-size: 28px;
+            font-style: italic;
+        }
+
+        .page-content {
+            width: 100%;
+            max-width: 1400px;
+            background-color: #fff;
+            padding: 60px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Spotify player styles */
+        .spotify-player {
+            margin-top: 30px;
+            width: 600px;
+            height: 300px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            transition: width 0.3s ease;
+        }
+
+        /* Webcam styles */
+        .webcam-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            width: 100%;
+            height: 100%;
+        }
+
+        video {
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .column {
+                width: 100%;
+            }
+
+            .button {
+                width: 250px;
+                font-size: 18px;
+            }
+
+            .spotify-player {
+                width: 100%;
+                height: 250px;
+            }
+
+            h1 {
+                font-size: 50px;
+            }
+
+            .emoji {
+                font-size: 1.5em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -27,6 +250,11 @@
                     loading="lazy"></iframe>
         </div>
 
+        <!-- Webcam Display -->
+        <div class="webcam-container">
+            <video id="webcam" width="640" height="480" autoplay></video>
+        </div>
+
         <div class="container">
             <div class="column">
                 <button class="button angry" id="angryBtn" aria-label="I am angry">Angry</button>
@@ -41,46 +269,44 @@
         </div>
     </div>
 
-    <!-- Teachable Machine model integration -->
+    <!-- Include Teachable Machine and TensorFlow.js -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image"></script>
 
     <script>
-        const URL = "https://teachablemachine.withgoogle.com/models/dUneWpt7T/";
+        // Teachable Machine Model URL
+        const modelURL = "https://teachablemachine.withgoogle.com/models/dUneWpt7T/";
+
         let model, webcam, labelContainer, maxPredictions;
 
         async function init() {
-            // Load the Teachable Machine model and metadata
-            const modelURL = URL + "model.json";
-            const metadataURL = URL + "metadata.json";
-
-            model = await tmImage.load(modelURL, metadataURL);
+            // Load the model from Teachable Machine
+            model = await tmImage.load(modelURL + "model.json", modelURL + "metadata.json");
             maxPredictions = model.getTotalClasses();
 
-            // Set up webcam
-            webcam = await tmImage.Webcam.setup();
+            // Initialize the webcam
+            webcam = await tmImage.Webcam.create(640, 480, true);
             await webcam.play();
+            document.getElementById("webcam").srcObject = webcam.webcam;
             window.requestAnimationFrame(loop);
-
-            // Create label container for feedback (optional)
-            labelContainer = document.getElementById("title");
         }
 
         async function loop() {
-            // Update the webcam feed every frame
             webcam.update();
             await predict();
             window.requestAnimationFrame(loop);
         }
 
         async function predict() {
-            // Get predictions from Teachable Machine model
             const prediction = await model.predict(webcam.canvas);
-            const highestPrediction = prediction[0].className;
-            updatePageForMood(highestPrediction);
+            const topPrediction = prediction[0];
+
+            if (topPrediction) {
+                const mood = topPrediction.className; // Get the mood class
+                updatePageForMood(mood); // Update the page based on the predicted mood
+            }
         }
 
-        // This function changes the page dynamically based on the prediction
         function updatePageForMood(mood) {
             const moodSettings = {
                 angry: { 
@@ -133,16 +359,6 @@
                 }
             };
 
-            // Update button styles
-            document.querySelectorAll('.button').forEach(btn => btn.classList.remove('selected', 'greyed'));
-            const selectedButton = document.getElementById(`${mood}Btn`);
-            selectedButton.classList.add('selected');
-            document.querySelectorAll('.button').forEach(btn => {
-                if (btn !== selectedButton) {
-                    btn.classList.add('greyed');
-                }
-            });
-
             // Update background and content based on mood
             document.body.style.backgroundColor = moodSettings[mood].color;
             document.getElementById('background-shapes').style.background = moodSettings[mood].background;
@@ -160,8 +376,8 @@
                                                                       loading="lazy"></iframe>`;
         }
 
-        // Call init function when the page loads
-        window.onload = init;
+        // Initialize the Teachable Machine model when the page loads
+        window.addEventListener("load", init);
     </script>
 </body>
 </html>

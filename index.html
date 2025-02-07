@@ -3,381 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Feelings of the Day</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rock+Salt&family=Sacramento&family=Chewy&family=Gloria+Hallelujah&family=Righteous&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
+    <title>Mood Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&family=Sacramento&family=Chewy&family=Gloria+Hallelujah&family=Rock+Salt&family=Righteous&family=Sacramento&family=Roboto+Slab&display=swap" rel="stylesheet">
     <style>
-        /* Your existing CSS remains unchanged */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f7f7f7;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-            padding-top: 50px;
-            position: relative;
-            overflow: hidden;
-            transition: background-color 0.5s ease, color 0.5s ease;
+        /* Style for buttons */
+        button {
+            font-size: 18px;
+            padding: 10px;
+            cursor: pointer;
+            margin: 5px;
         }
 
-        .background-shapes {
-            position: absolute;
+        .selected {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .greyed {
+            background-color: #dddddd;
+        }
+
+        /* Styling for overall page */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to top right, #ff6666, #ff9933);
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Styling for the title */
+        #title {
+            font-size: 36px;
+            font-family: 'Sacramento', cursive;
+            margin-bottom: 20px;
+        }
+
+        /* Emoji container */
+        #emoji {
+            font-size: 100px;
+        }
+
+        /* Styling for iframe */
+        iframe {
+            border: none;
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        /* Webcam style */
+        #webcam {
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #000;
+            margin-top: 20px;
+        }
+
+        #background-shapes {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.1);
-            opacity: 1;
-            pointer-events: none;
-            transition: opacity 0.5s ease, background 0.5s ease;
-        }
-
-        h1 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 60px;
-            margin-bottom: 0;
-            color: #444;
-            letter-spacing: 1px;
-            font-weight: 700;
-            line-height: 1.2;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-            transition: color 0.5s ease, font-family 0.5s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .emoji {
-            font-size: 1.5em;
-            margin-left: 15px;
-        }
-
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
-            flex-wrap: wrap;
-            z-index: 2;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .column {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .button {
-            display: inline-block;
-            height: 100px;
-            width: 300px;
-            font-size: 22px;
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 600;
-            margin: 10px;
-            border: 3px solid;
-            cursor: pointer;
-            border-radius: 18px;
-            color: white;
-            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
-            text-transform: capitalize;
-            text-align: center;
-            line-height: 1.2;
-            box-sizing: border-box;
-        }
-
-        .button:hover {
-            transform: scale(1.03);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            background-color: #fff;
-            color: #333;
-        }
-
-        .button.selected {
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            background-color: #fff;
-            color: #333;
-            border-color: #333;
-        }
-
-        .button.greyed {
-            background-color: #d3d3d3;
-            color: #d3d3d3;
-            border-color: #d3d3d3;
-            filter: grayscale(100%);
-            pointer-events: auto;
-        }
-
-        .angry {
-            background: linear-gradient(to bottom, #ff6b6b, #ff4d4d);
-            border-color: #ff6b6b;
-            font-family: 'Roboto Slab', serif;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        .happy {
-            background: linear-gradient(to bottom, #f9e300, #f57c00);
-            border-color: #f9e300;
-            font-family: 'Chewy', cursive;
-            font-size: 24px;
-        }
-
-        .surprised {
-            background: linear-gradient(to bottom, #ff9800, #ff5722);
-            border-color: #ff9800;
-            font-family: 'Gloria Hallelujah', cursive;
-            font-size: 26px;
-        }
-
-        .calm {
-            background: linear-gradient(to bottom, #81c784, #4caf50);
-            border-color: #81c784;
-            font-family: 'Sacramento', cursive;
-            font-size: 28px;
-            color: #455a64;
-        }
-
-        .sad {
-            background: linear-gradient(to bottom, #7986cb, #5c6bc0);
-            border-color: #7986cb;
-            font-family: 'Righteous', sans-serif;
-            font-size: 26px;
-            color: #1e88e5;
-        }
-
-        .scared {
-            background: linear-gradient(to bottom, #9c27b0, #6a1b9a);
-            border-color: #9c27b0;
-            font-family: 'Rock Salt', cursive;
-            font-size: 28px;
-            font-style: italic;
-        }
-
-        .page-content {
-            width: 100%;
-            max-width: 1400px;
-            background-color: #fff;
-            padding: 60px;
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            z-index: 2;
-            text-align: center;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Spotify player styles */
-        .spotify-player {
-            margin-top: 30px;
-            width: 600px;
-            height: 300px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-            transition: width 0.3s ease;
-        }
-
-        /* Webcam styles */
-        .webcam-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 30px;
-            width: 100%;
-            height: 100%;
-        }
-
-        video {
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .column {
-                width: 100%;
-            }
-
-            .button {
-                width: 250px;
-                font-size: 18px;
-            }
-
-            .spotify-player {
-                width: 100%;
-                height: 250px;
-            }
-
-            h1 {
-                font-size: 50px;
-            }
-
-            .emoji {
-                font-size: 1.5em;
-            }
+            z-index: -1;
+            background: linear-gradient(to top right, #ff6666, #ff9933);
         }
     </style>
 </head>
 <body>
 
-    <div class="background-shapes" id="background-shapes"></div>
+<div id="background-shapes"></div>
 
-    <div class="page-content">
-        <h1 id="title">
-            Feeling Good Today? <span id="emoji" class="emoji">😊</span>
-        </h1>
+<video id="webcam" width="640" height="480" autoplay></video>
 
-        <!-- Spotify Player Embed for All Moods -->
-        <div id="spotify-container">
-            <iframe id="spotify-player" class="spotify-player" 
-                    src="https://open.spotify.com/embed/track/6i0V12jOa3mr6uu4WYhUBr?utm_source=generator" 
-                    width="600" height="300" frameborder="0" 
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                    loading="lazy"></iframe>
-        </div>
+<div id="title">Mood Tracker</div>
+<div id="emoji">😊</div>
 
-        <!-- Webcam Display -->
-        <div class="webcam-container">
-            <video id="webcam" width="640" height="480" autoplay></video>
-        </div>
+<iframe id="spotify-player" class="spotify-player" src="https://open.spotify.com/embed/track/32OlwWuMpZ6b0aN2RZOeMS?utm_source=generator" width="600" height="300" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 
-        <div class="container">
-            <div class="column">
-                <button class="button angry" id="angryBtn" aria-label="I am angry">Angry</button>
-                <button class="button surprised" id="surprisedBtn" aria-label="I am surprised">Surprised</button>
-                <button class="button happy" id="happyBtn" aria-label="I am happy">Happy</button>
-            </div>
-            <div class="column">
-                <button class="button calm" id="calmBtn" aria-label="I am calm">Calm</button>
-                <button class="button sad" id="sadBtn" aria-label="I am sad">Sad</button>
-                <button class="button scared" id="scaredBtn" aria-label="I am scared">Scared</button>
-            </div>
-        </div>
-    </div>
+<!-- Buttons for mood -->
+<button id="angryBtn">Angry</button>
+<button id="happyBtn">Happy</button>
+<button id="surprisedBtn">Surprised</button>
+<button id="calmBtn">Calm</button>
+<button id="sadBtn">Sad</button>
+<button id="scaredBtn">Scared</button>
 
-    <!-- Include Teachable Machine and TensorFlow.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image"></script>
+<script>
+    let model, webcam, labelContainer, maxPredictions;
+    let lastPredictedLabel = '';
+    let predictionTime = 0;
 
-    <script>
-        // Teachable Machine Model URL
-        const modelURL = "https://teachablemachine.withgoogle.com/models/dUneWpt7T/";
-
-        let model, webcam, labelContainer, maxPredictions;
-
-        async function init() {
-            // Load the model from Teachable Machine
-            model = await tmImage.load(modelURL + "model.json", modelURL + "metadata.json");
+    // Initialize the Teachable Machine Model
+    async function init() {
+        const modelURL = 'https://teachablemachine.withgoogle.com/models/jf-a5_tbm/model.json';
+        const metadataURL = 'https://teachablemachine.withgoogle.com/models/jf-a5_tbm/metadata.json';
+        
+        // Load the model
+        try {
+            model = await tmImage.load(modelURL, metadataURL);
             maxPredictions = model.getTotalClasses();
-
-            // Initialize the webcam
-            webcam = await tmImage.Webcam.create(640, 480, true);
+            console.log("Teachable Machine Model Loaded Successfully!");
+        } catch (error) {
+            console.error("Error loading Teachable Machine model: ", error);
+            alert("Error loading Teachable Machine model.");
+            return;
+        }
+        
+        // Set up the webcam
+        try {
+            webcam = await tmImage.Webcam.setup();
             await webcam.play();
-            document.getElementById("webcam").srcObject = webcam.webcam;
-            window.requestAnimationFrame(loop);
+            document.getElementById('webcam').srcObject = webcam.webcam;
+            console.log("Webcam initialized successfully!");
+        } catch (error) {
+            console.error("Error setting up webcam: ", error);
+            alert("Error setting up webcam.");
+            return;
         }
 
-        async function loop() {
-            webcam.update();
-            await predict();
-            window.requestAnimationFrame(loop);
-        }
+        // Start the continuous prediction loop
+        window.requestAnimationFrame(predictWebcam);
+    }
 
-        async function predict() {
-            const prediction = await model.predict(webcam.canvas);
-            const topPrediction = prediction[0];
-
-            if (topPrediction) {
-                const mood = topPrediction.className; // Get the mood class
-                updatePageForMood(mood); // Update the page based on the predicted mood
+    async function predictWebcam() {
+        webcam.update();
+        
+        // Get predictions from the Teachable Machine model
+        const predictions = await model.predict(webcam.canvas);
+        
+        // Find the most confident prediction with a confidence >= 70%
+        const topPrediction = predictions.reduce((best, current) => 
+            current.probability > best.probability ? current : best
+        );
+        
+        // If the confidence is above 70%, and the label stays for 3 seconds, change mood
+        if (topPrediction.probability >= 0.7) {
+            if (topPrediction.className !== lastPredictedLabel) {
+                predictionTime = Date.now();
             }
+            lastPredictedLabel = topPrediction.className;
+            
+            if (Date.now() - predictionTime >= 3000) {
+                updatePageForMood(lastPredictedLabel);
+            }
+        } else {
+            // Reset the timer if the confidence drops below 70%
+            predictionTime = 0;
+            lastPredictedLabel = '';
         }
 
-        function updatePageForMood(mood) {
-            const moodSettings = {
-                angry: { 
-                    color: '#ff6b6b', 
-                    emoji: '😡', 
-                    trackUrl: 'https://open.spotify.com/embed/track/1P17dC1amhFzptugyAO7Il?utm_source=generator',
-                    font: 'Roboto Slab',
-                    title: 'Let it out! 😡',
-                    background: 'radial-gradient(circle, #ff6b6b, #ff4d4d)'
-                },
-                happy: { 
-                    color: '#f9e300', 
-                    emoji: '😊', 
-                    trackUrl: 'https://open.spotify.com/embed/track/32OlwWuMpZ6b0aN2RZOeMS?utm_source=generator',
-                    font: 'Chewy', 
-                    title: 'Enjoy the moment! 😊',
-                    background: 'radial-gradient(circle, #f9e300, #f57c00)'
-                },
-                surprised: { 
-                    color: '#ff9800', 
-                    emoji: '😲', 
-                    trackUrl: 'https://open.spotify.com/embed/track/5UMgKsx50UqgN7VMNmeDuW?utm_source=generator',
-                    font: 'Gloria Hallelujah',
-                    title: 'Wow, that\'s unexpected! 😲',
-                    background: 'radial-gradient(circle, #ff9800, #ff5722)'
-                },
-                calm: { 
-                    color: '#81c784', 
-                    emoji: '😌', 
-                    trackUrl: 'https://open.spotify.com/embed/track/6pWgRkpqVfxnj3WuIcJ7WP?utm_source=generator',
-                    font: 'Sacramento', 
-                    title: 'Breathe and relax. 😌',
-                    background: 'radial-gradient(circle, #81c784, #4caf50)'
-                },
-                sad: { 
-                    color: '#7986cb', 
-                    emoji: '😔', 
-                    trackUrl: 'https://open.spotify.com/embed/track/3bNv3VuUOKgrf5hu3YcuRo?utm_source=generator',
-                    font: 'Righteous', 
-                    title: 'It\'s okay to feel down. 😔',
-                    background: 'radial-gradient(circle, #7986cb, #5c6bc0)'
-                },
-                scared: { 
-                    color: '#9c27b0', 
-                    emoji: '😨', 
-                    trackUrl: 'https://open.spotify.com/embed/track/6i0V12jOa3mr6uu4WYhUBr?utm_source=generator',
-                    font: 'Rock Salt', 
-                    title: 'Stay strong! 😨',
-                    background: 'radial-gradient(circle, #9c27b0, #6a1b9a)'
-                }
-            };
+        // Keep predicting every frame
+        window.requestAnimationFrame(predictWebcam);
+    }
 
-            // Update background and content based on mood
-            document.body.style.backgroundColor = moodSettings[mood].color;
-            document.getElementById('background-shapes').style.background = moodSettings[mood].background;
-            document.getElementById('emoji').textContent = moodSettings[mood].emoji;
-            document.getElementById('title').textContent = moodSettings[mood].title;
+    function updatePageForMood(mood) {
+        const moodSettings = {
+            angry: { 
+                color: '#ff6b6b', 
+                emoji: '😡', 
+                trackUrl: 'https://open.spotify.com/embed/track/1P17dC1amhFzptugyAO7Il?utm_source=generator',
+                font: 'Roboto Slab',
+                title: 'Let it out! 😡',
+                background: 'radial-gradient(circle, #ff6b6b, #ff4d4d)'
+            },
+            happy: { 
+                color: '#f9e300', 
+                emoji: '😊', 
+                trackUrl: 'https://open.spotify.com/embed/track/32OlwWuMpZ6b0aN2RZOeMS?utm_source=generator',
+                font: 'Chewy', 
+                title: 'Enjoy the moment! 😊',
+                background: 'radial-gradient(circle, #f9e300, #f57c00)'
+            },
+            surprised: { 
+                color: '#ff9800', 
+                emoji: '😲', 
+                trackUrl: 'https://open.spotify.com/embed/track/5UMgKsx50UqgN7VMNmeDuW?utm_source=generator',
+                font: 'Gloria Hallelujah',
+                title: 'Wow, that\'s unexpected! 😲',
+                background: 'radial-gradient(circle, #ff9800, #ff5722)'
+            },
+            calm: { 
+                color: '#81c784', 
+                emoji: '😌', 
+                trackUrl: 'https://open.spotify.com/embed/track/6pWgRkpqVfxnj3WuIcJ7WP?utm_source=generator',
+                font: 'Sacramento', 
+                title: 'Breathe and relax. 😌',
+                background: 'radial-gradient(circle, #81c784, #4caf50)'
+            },
+            sad: { 
+                color: '#7986cb', 
+                emoji: '😔', 
+                trackUrl: 'https://open.spotify.com/embed/track/3bNv3VuUOKgrf5hu3YcuRo?utm_source=generator',
+                font: 'Righteous', 
+                title: 'It\'s okay to feel down. 😔',
+                background: 'radial-gradient(circle, #7986cb, #5c6bc0)'
+            },
+            scared: { 
+                color: '#9c27b0', 
+                emoji: '😨', 
+                trackUrl: 'https://open.spotify.com/embed/track/6i0V12jOa3mr6uu4WYhUBr?utm_source=generator',
+                font: 'Rock Salt', 
+                title: 'Stay strong! 😨',
+                background: 'radial-gradient(circle, #9c27b0, #6a1b9a)'
+            }
+        };
 
-            // Adjust font for title based on the selected mood
-            document.getElementById('title').style.fontFamily = moodSettings[mood].font;
+        const moodSetting = moodSettings[mood];
+        
+        if (!moodSetting) return;
 
-            // Re-insert the Spotify iframe with autoplay
-            document.getElementById('spotify-container').innerHTML = `<iframe id="spotify-player" class="spotify-player" 
-                                                                      src="${moodSettings[mood].trackUrl}&autoplay=1" 
-                                                                      width="600" height="300" frameborder="0" 
-                                                                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                                                                      loading="lazy"></iframe>`;
-        }
+        document.body.style.backgroundColor = moodSetting.color;
+        document.getElementById('background-shapes').style.background = moodSetting.background;
+        document.getElementById('emoji').textContent = moodSetting.emoji;
+        document.getElementById('title').textContent = moodSetting.title;
+        document.getElementById('title').style.fontFamily = moodSetting.font;
 
-        // Initialize the Teachable Machine model when the page loads
-        window.addEventListener("load", init);
-    </script>
+        // Update Spotify track
+        document.getElementById('spotify-player').src = moodSetting.trackUrl;
+
+        // Select the corresponding button
+        const selectedButton = document.getElementById(`${mood}Btn`);
+        selectedButton.classList.add('selected');
+        
+        // Deselect other buttons
+        document.querySelectorAll('button').forEach(button => {
+            if (button !== selectedButton) {
+                button.classList.remove('selected');
+                button.classList.add('greyed');
+            }
+        });
+    }
+
+    // Start the model and webcam
+    init();
+</script>
+
 </body>
 </html>

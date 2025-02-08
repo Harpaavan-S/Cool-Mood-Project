@@ -3,41 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Teachable Machine Model</title>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.4"></script>
+    <title>Dynamic Feelings of the Day</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rock+Salt&family=Sacramento&family=Chewy&family=Gloria+Hallelujah&family=Righteous&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding-top: 50px;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            opacity: 1;
+            pointer-events: none;
+            transition: opacity 0.5s ease, background 0.5s ease;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 60px;
+            margin-bottom: 0;
+            color: #444;
+            letter-spacing: 1px;
+            font-weight: 700;
+            line-height: 1.2;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+            transition: color 0.5s ease, font-family 0.5s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoji {
+            font-size: 1.5em; /* Make the emoji a bit bigger than the regular text */
+            margin-left: 15px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            height: 100px;
+            width: 300px;
+            font-size: 22px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            margin: 10px;
+            border: 3px solid;
+            cursor: pointer;
+            border-radius: 18px;
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
+            text-transform: capitalize;
+            text-align: center;
+            line-height: 1.2;
+            box-sizing: border-box;
+        }
+
+        .button:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            background-color: #fff;
+            color: #333;
+        }
+
+        .button.selected {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            background-color: #fff;
+            color: #333;
+            border-color: #333;
+        }
+
+        .button.greyed {
+            background-color: #d3d3d3;
+            color: #d3d3d3;
+            border-color: #d3d3d3;
+            filter: grayscale(100%);
+            pointer-events: auto;
+        }
+
+        /* Styles for various moods (same as before) */
+        /* ... (same as your existing CSS) ... */
+
+        /* Webcam styles */
+        #webcam {
+            display: block;
+            margin: 20px auto;
+            border: 2px solid #ccc;
+            width: 320px;
+            height: 240px;
+        }
+
+        .page-content {
+            width: 100%;
+            max-width: 1400px;
+            background-color: #fff;
+            padding: 60px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Spotify player styles (same as before) */
+        /* ... (same as your existing CSS) ... */
+    </style>
 </head>
 <body>
 
-<h1>Teachable Machine Model Test</h1>
-<video id="webcam" width="640" height="480" autoplay></video>
+    <div class="background-shapes" id="background-shapes"></div>
 
-<script>
-    let model, webcam;
+    <div class="page-content">
+        <h1 id="title">
+            Feeling Good Today? <span id="emoji" class="emoji">😊</span>
+        </h1>
 
-    async function init() {
-        const modelURL = 'https://teachablemachine.withgoogle.com/models/jf-a5_tbm/model.json';
-        const metadataURL = 'https://teachablemachine.withgoogle.com/models/jf-a5_tbm/metadata.json';
+        <!-- Webcam Display -->
+        <video id="webcam" autoplay></video>
 
-        try {
+        <!-- Spotify Player Embed for All Moods -->
+        <div id="spotify-container">
+            <iframe id="spotify-player" class="spotify-player" 
+                    src="https://open.spotify.com/embed/track/6i0V12jOa3mr6uu4WYhUBr?utm_source=generator" 
+                    width="600" height="300" frameborder="0" 
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    loading="lazy"></iframe>
+        </div>
+
+        <div class="container">
+            <div class="column">
+                <button class="button angry" id="angryBtn" aria-label="I am angry">Angry</button>
+                <button class="button surprised" id="surprisedBtn" aria-label="I am surprised">Surprised</button>
+                <button class="button happy" id="happyBtn" aria-label="I am happy">Happy</button>
+            </div>
+            <div class="column">
+                <button class="button calm" id="calmBtn" aria-label="I am calm">Calm</button>
+                <button class="button sad" id="sadBtn" aria-label="I am sad">Sad</button>
+                <button class="button scared" id="scaredBtn" aria-label="I am scared">Scared</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@2.4.7"></script>
+    <script>
+        let model, webcam, labelContainer, maxPredictions;
+
+        // Load Teachable Machine model
+        async function loadModel() {
+            const modelURL = 'https://teachablemachine.withgoogle.com/models/jf-a5_tbm/model.json';
+            const metadataURL = 'https://teachablemachine.withgoogle.com/models/jf-a5_tbm/metadata.json';
+            
             model = await tmImage.load(modelURL, metadataURL);
-            console.log("Teachable Machine model loaded successfully!");
-        } catch (error) {
-            console.error("Error loading the model:", error);
-            alert("Error loading the model.");
-        }
+            maxPredictions = model.getTotalClasses();
 
-        try {
-            webcam = await tmImage.Webcam.setup();
+            // Set up webcam
+            webcam = new tmImage.Webcam(320, 240, true);
+            await webcam.setup(); // Request access to webcam
             await webcam.play();
-            document.getElementById('webcam').srcObject = webcam.webcam;
-        } catch (error) {
-            console.error("Error setting up webcam:", error);
-            alert("Error setting up webcam.");
+
+            // Append webcam video to the page
+            document.getElementById('webcam').appendChild(webcam.canvas);
+
+            // Start prediction loop
+            requestAnimationFrame(loop);
         }
-    }
 
-    init();
-</script>
+        async function loop() {
+            webcam.update(); // Update the webcam frame
+            const prediction = await model.predict(webcam.canvas); // Get the predictions
 
+            let maxConfidence = 0;
+            let currentLabel = '';
+
+            // Find the prediction with the highest confidence
+            for (let i = 0; i < maxPredictions; i++) {
+                const classPrediction = prediction[i];
+                if (classPrediction.probability > maxConfidence) {
+                    maxConfidence = classPrediction.probability;
+                    currentLabel = classPrediction.className;
+                }
+            }
+
+            // Check if confidence is above threshold
+            if (maxConfidence > 0.7) {
+                updatePageForMood(currentLabel);
+            }
+
+            requestAnimationFrame(loop); // Repeat the loop
+        }
+
+        // Update the page content based on the model's prediction
+        function updatePageForMood(mood) {
+            const moodSettings = {
+                angry: { color: '#ff6b6b', emoji: '😡', title: 'Let it out! 😡', background: 'radial-gradient(circle, #ff6b6b, #ff4d4d)' },
+                happy: { color: '#f9e300', emoji: '😊', title: 'Enjoy the moment! 😊', background: 'radial-gradient(circle, #f9e300, #f5d300)' },
+                surprised: { color: '#ff914d', emoji: '😲', title: 'Whoa! 😲', background: 'radial-gradient(circle, #ff914d, #ff7f00)' },
+                calm: { color: '#61c0bf', emoji: '😌', title: 'Chill vibes 😌', background: 'radial-gradient(circle, #61c0bf, #4b8a8b)' },
+                sad: { color: '#a0a0a0', emoji: '😞', title: 'It\'s okay to be sad 😞', background: 'radial-gradient(circle, #a0a0a0, #808080)' },
+                scared: { color: '#ff4d4d', emoji: '😱', title: 'Take a breath 😱', background: 'radial-gradient(circle, #ff4d4d, #b32d2d)' }
+            };
+
+            // Set the title, background color, and emoji based on mood
+            document.getElementById('title').textContent = moodSettings[mood].title;
+            document.getElementById('emoji').textContent = moodSettings[mood].emoji;
+            document.body.style.background = moodSettings[mood].background;
+            document.getElementById('title').style.color = moodSettings[mood].color;
+
+            // Highlight the selected button
+            document.querySelectorAll('.button').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById(`${mood.toLowerCase()}Btn`).classList.add('selected');
+        }
+
+        // Initialize the model and webcam setup
+        window.onload = async function() {
+            await loadModel();
+        }
+    </script>
 </body>
 </html>
